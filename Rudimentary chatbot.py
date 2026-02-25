@@ -1,6 +1,4 @@
-def generate_reply(message):
-    return "I heard you say " + message
-
+from utils import generate_reply
 
 def chat():
     while True:
@@ -13,5 +11,5 @@ def chat():
         response = generate_reply(user_input)
         print("AI:", response)
 
-
-chat()
+if __name__ == "__main__":
+    chat()
