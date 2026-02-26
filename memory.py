@@ -1,24 +1,45 @@
-from config import MAX_HISTORY
+import json
+import os
+from config import MAX_HISTORY, MEMORY_FILE, LATEST_EXCHANGE_PAIRS
 
 def initialize_memory():
     # Initialize memory or data structures here
+    if os.path.exists(MEMORY_FILE):
+        with open(MEMORY_FILE, "r") as f:
+            return json.load(f)
     return []
 
 def store_in_memory(history: list, role: str, content: str):
     # Store data in memory
     history.append({"role": role, "content": content})
-    if len(history) > MAX_HISTORY:
-        history[:] = history[-MAX_HISTORY:]
+    with open(MEMORY_FILE, "w") as f:
+        json.dump(history, f, indent=2)
+
 
 def retrieve_latest_memory(history: list, max_length: int):
     # Retrieve the latest memory or data
-    latest_message = history[-max_length:]
-    if not latest_message:
+    if not history:
         return "No memory available."
-    lines= ["Latest memory content: "]
-    for message in latest_message:
-        role = "User" if message["role"] == "user" else "AI"
-        lines.append(f"{role}: {message['content']}")
+    exchanges = []
+    i = len(history) - 1
+    while i > 0 and len(exchanges) < LATEST_EXCHANGE_PAIRS:
+        current = history[i]
+        previous = history[i - 1]
+        if previous["role"] == "user" and current["role"] == "ai":
+            exchanges.append((previous, current))
+            i -= 2
+        else:
+            i -= 1
+    if not exchanges:
+        return "No complete exchanges yet."
+    exchanges.reverse()  
+    lines = [f"Last {len(exchanges)} exchange(s):"]
+
+    for user_msg, ai_msg in exchanges:
+        lines.append(f"User: {user_msg['content']}")
+        lines.append(f"AI: {ai_msg['content']}")
+        lines.append("")
+
     return "\n".join(lines)
 
 def format_history(history: list) -> str:
@@ -35,5 +56,7 @@ def format_history(history: list) -> str:
 def clear_history(history: list):
     # Clear the conversation history
     history.clear()
+    with open(MEMORY_FILE, "w") as f:
+        json.dump([], f)
 
     

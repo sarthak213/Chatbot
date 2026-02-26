@@ -1,4 +1,6 @@
 MODEL_NAME = "Mock_Model"
-MAX_HISTORY = 5
-DEBUG_MODE = True
+MAX_HISTORY = 20
+DEBUG_MODE = False
 REVERSE_MODE = False
+LATEST_EXCHANGE_PAIRS = 3
+MEMORY_FILE = "chat_history.json"

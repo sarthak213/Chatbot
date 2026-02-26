@@ -1,6 +1,9 @@
 from utils import generate_reply
-from config import MAX_HISTORY
+from config import MAX_HISTORY, LATEST_EXCHANGE_PAIRS
 import memory
+
+if not isinstance(LATEST_EXCHANGE_PAIRS, int) or LATEST_EXCHANGE_PAIRS <= 0:
+    raise ValueError("LATEST_EXCHANGE_PAIRS must be a positive integer.")
 
 def chat():
     history = memory.initialize_memory()

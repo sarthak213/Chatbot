@@ -1,0 +1,22 @@
+[
+  {
+    "role": "ai",
+    "content": "I heard you say HELLO in lowercase!"
+  },
+  {
+    "role": "user",
+    "content": "exit"
+  },
+  {
+    "role": "ai",
+    "content": "I heard you say EXIT in lowercase!"
+  },
+  {
+    "role": "user",
+    "content": "Hello"
+  },
+  {
+    "role": "ai",
+    "content": "I heard you say Hello"
+  }
+]
