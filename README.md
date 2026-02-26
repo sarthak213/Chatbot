@@ -1,32 +1,34 @@
-# 🧠Rudimentary Chatbot
+# 🧠 Rudimentary CLI Chatbot
 
-A modular command-line chatbot built in Python with clean separation of concerns and configurable behavior.
+A session-based, file-persistent CLI chatbot built in Python.
 
-This project serves as a foundational backend architecture for future AI systems (LLM integration, RAG pipelines, agent workflows, etc.).
+This project started as a simple conversational bot and evolved into a structured, stateful system with session management and configurable memory behavior — laying the foundation for future LLM and vector database integration.
 
 ---
 
 ## 🚀 Features
 
-- Interactive CLI chat loop  
-- Modular architecture  
-- In-memory conversation storage  
-- Config-driven behavior  
-- Debug logging mode  
-- Reverse response mode  
-- Command-based controls  
-- Automatic history trimming  
+- 💬 Interactive CLI chat loop
+- 🗂️ Session-based conversation storage
+- 💾 Persistent JSON memory per session
+- 📜 `/history` – View full session history
+- 🔎 `/latest` – View last N conversation pairs
+- 📁 `/sessions` – List previous sessions
+- ▶ `/resume <n>` – Resume a previous session
+- 🧹 `/clear` – Clear current session history
+- ⚙ Config-driven behavior
 
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```text
 .
-├── Rudimentary chatbot.py   # Entry point (chat loop + command routing)
+├── Rudimentary_chatbot.py   # Entry point (chat loop + routing)
 ├── utils.py                 # Reply generation logic
-├── memory.py                # Conversation memory management
+├── memory.py                # Session memory + persistence
 ├── config.py                # Application configuration
+├── chats/                   # Session JSON files
 └── README.md
 ```
 
@@ -34,131 +36,132 @@ This project serves as a foundational backend architecture for future AI systems
 
 ## 🏗 Architecture Overview
 
-This Project follows a clean layered architecture
+### 1️⃣ Session-Based Storage
 
-| File                     | Responsibility                        |
-| ------------------------ | ------------------------------------- |
-| `Rudimentary chatbot.py` | Main control loop & command handling  |
-| `utils.py`               | Message processing & reply logic      |
-| `memory.py`              | State management & history formatting |
-| `config.py`              | Runtime configuration                 |
+Each chat session is stored as:
 
-This design ensures:
-
-- Clear separation of logic
-- Easy scalability
-- Swappable storage layer
-- Easy future LLM integration
-
----
-
-## ⚙️ Configuration
-
-All runtime settings are centralized in config.py:
-
-```python
-MODEL_NAME = "Mock_Model"
-MAX_HISTORY = 5
-DEBUG_MODE = True
-REVERSE_MODE = False
+```text
+chats/session_YYYYMMDD_HHMMSS.json
 ```
 
-Config Options
-
-- MODEL_NAME → Placeholder for future model integration
-- MAX_HISTORY → Maximum stored messages
-- DEBUG_MODE → Enables internal debug logging
-- REVERSE_MODE → Reverses message content in responses
-  
----
-
-## 💬 Available Commands
-
-| Command    | Description                            |
-| ---------- | -------------------------------------- |
-| `/exit`    | Exit the chatbot                       |
-| `/history` | Display full conversation history      |
-| `/latest`  | Show the latest `MAX_HISTORY` messages |
-| `/clear`   | Clear conversation history             |
+Sessions are automatically created when the program starts.
 
 ---
 
-## 💾 Memory System
+### 2️⃣ Memory Format
 
-Conversation history is stored as a list of dictionaries:
+Messages are stored as structured dictionaries:
 
-```python
+```json
 [
-    {"role": "user", "content": "hello"},
-    {"role": "ai", "content": "Hi there!"}
+  { "role": "user", "content": "Hello" },
+  { "role": "ai", "content": "I heard you say Hello" }
 ]
 ```
 
-History is automatically trimmed:
+---
+
+### 3️⃣ Command System
+
+| Command       | Description                                                                        |
+|---------------|------------------------------------------------------------------------------------|
+| `/exit`       | Exit chat                                                                          |
+| `/history`    | Show full session history                                                          |
+| `/latest`     | Show last N exchange pairs                                                         |
+| `/sessions`   | List previous sessions                                                             |
+| `/resume <n>` | Resume selected session works. Only when `/sessions` command has already been used |
+| `/clear`      | Clear current session                                                              |
+
+---
+
+## ⚙ Configuration (`config.py`)
+
+All key behavior is configurable:
 
 ```python
-if len(history) > MAX_HISTORY:
-    history[:] = history[-MAX_HISTORY:]
+MODEL_NAME = "Mock_Model"
+MAX_HISTORY = 20
+DEBUG_MODE = True
+REVERSE_MODE = False
+LATEST_EXCHANGE_PAIRS = 3
 ```
 
----
+### Explanation
 
-## 🛠 Reply Logic
-
-The chatbot:
-
-- Finds the latest user message
-- Applies conditional logic
-- Supports:
-  - Keyword detection (Python / Java)
-  - Uppercase detection
-  - Lowercase detection
-  - Reverse mode
-  - Debug output
-
-Designed to be easily replaced with real LLM API calls later.
+- `MAX_HISTORY` → Maximum messages stored in memory
+- `LATEST_EXCHANGE_PAIRS` → Number of user/AI exchange pairs shown in `/latest`
+- `DEBUG_MODE` → Prints debug logs
+- `REVERSE_MODE` → Experimental reverse reply mode
 
 ---
 
-## ▶️ How to Run
+## 🔎 How `/latest` Works
 
-Make sure Python 3.10+ is installed.
+Unlike `/history`, which shows everything, `/latest`:
+
+- Extracts complete **user → AI exchange pairs**
+- Returns the last `LATEST_EXCHANGE_PAIRS`
+- Ensures pairs are logically grouped
+
+This design prepares the system for:
+
+- Context window trimming
+- LLM token management
+- Prompt construction
+
+---
+
+## 🧠 State Management
+
+The CLI includes a controlled resume flow:
+
+- `/sessions` enables session selection mode
+- `/resume` works only after `/sessions` is called
+- This prevents invalid session selection
+
+This introduces basic CLI state machine behavior.
+
+---
+
+## 🎯 Why This Project Matters
+
+This is not just a toy chatbot.
+
+It establishes:
+
+- Persistent session management
+- Clean message structure
+- Config-driven architecture
+- CLI command routing
+- Memory abstraction layer
+
+Which makes it ready for:
+
+- LLM API integration
+- Vector database storage
+- FastAPI backend conversion
+- Multi-user expansion
+
+---
+
+## 🛣 Roadmap
+
+### Next Steps
+
+- 🔌 Integrate OpenAI / Anthropic / Google LLM APIs
+- 🧮 Add embedding generation
+- 🗄 Integrate a vector database (FAISS / Milvus / Pinecone)
+- 🌐 Convert to FastAPI backend
+- 🖥 Build minimal web UI
+
+---
+
+## 🏁 Running the Project
 
 ```bash
-python "Rudimentary chatbot.py"
+python Rudimentary_chatbot.py
 ```
 
-Start chatting in the terminal.
-
----
-
-## 🎯 Design Goals
-
-- Practice modular backend design
-- Understand state management
-- Implement command routing
-- Build scalable AI system foundations
-
----
-
-## 🔮 Future Improvements
-
-- File-based persistence (JSON storage)
-- PostgreSQL integration
-- FastAPI backend
-- LLM API integration (OpenAI / Anthropic)
-- Streaming responses
-- RAG document ingestion
-- Agent tool execution layer
-
----
-
-## 📜 Licences
-
-[MIT](https://choosealicense.com/licenses/mit/)
-
----
-
-Built as part of a structured journey toward AI backend engineering and orchestration systems.
+Sessions will automatically be created inside the `chats/` directory.
 
 ---
