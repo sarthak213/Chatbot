@@ -1,22 +1,22 @@
 import json
 import os
-from config import MAX_HISTORY, MEMORY_FILE, LATEST_EXCHANGE_PAIRS
+from config import LATEST_EXCHANGE_PAIRS
 
-def initialize_memory():
+def initialize_memory(session_file):
     # Initialize memory or data structures here
-    if os.path.exists(MEMORY_FILE):
-        with open(MEMORY_FILE, "r") as f:
+    if os.path.exists(session_file):
+        with open(session_file, "r") as f:
             return json.load(f)
     return []
 
-def store_in_memory(history: list, role: str, content: str):
+def store_in_memory(history: list, role: str, content: str, filepath: str):
     # Store data in memory
     history.append({"role": role, "content": content})
-    with open(MEMORY_FILE, "w") as f:
+    with open(filepath, "w") as f:
         json.dump(history, f, indent=2)
 
 
-def retrieve_latest_memory(history: list, max_length: int):
+def retrieve_latest_memory(history: list):
     # Retrieve the latest memory or data
     if not history:
         return "No memory available."
@@ -53,10 +53,8 @@ def format_history(history: list) -> str:
     lines.append("---------------------\n")
     return "\n".join(lines)
 
-def clear_history(history: list):
+def clear_history(history: list, filepath: str):
     # Clear the conversation history
     history.clear()
-    with open(MEMORY_FILE, "w") as f:
+    with open(filepath, "w") as f:
         json.dump([], f)
-
-    
