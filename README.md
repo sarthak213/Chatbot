@@ -69,7 +69,7 @@ Messages are stored as structured dictionaries:
 | `/history`    | Show full session history                                                          |
 | `/latest`     | Show last N exchange pairs                                                         |
 | `/sessions`   | List previous sessions                                                             |
-| `/resume <n>` | Resume selected session works. Only when `/sessions` command has already been used |
+| `/resume <n>` | Resume selected session .Works Only when `/sessions` command has already been used |
 | `/clear`      | Clear current session                                                              |
 
 ---
