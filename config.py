@@ -1,4 +1,4 @@
 MODEL_NAME = "Mock_Model"
 MAX_HISTORY = 5
 DEBUG_MODE = True
-REVERSE_MODE = True
+REVERSE_MODE = False
