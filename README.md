@@ -21,12 +21,14 @@ This project serves as a foundational backend architecture for future AI systems
 
 ## 📂 Project Structure
 
+```text
 .
-├── Rudimentary chatbot.py     # Entry point (chat loop + command routing)
-├── utils.py                   # Reply generation logic
-├── memory.py                  # Conversation memory management
-├── config.py                  # Application configuration
+├── Rudimentary chatbot.py   # Entry point (chat loop + command routing)
+├── utils.py                 # Reply generation logic
+├── memory.py                # Conversation memory management
+├── config.py                # Application configuration
 └── README.md
+```
 
 ---
 
