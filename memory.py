@@ -29,14 +29,13 @@ def store_in_memory(history: list, role: str, content: str, filepath: str):
     history.append({"role": role, "content": content})
     with open(filepath, "w") as f:
         json.dump(history, f, indent=2)
-    if check_file_size(filepath):
-        print("⚠️  Session file exceeded size limit. Trimming oldest exchange...")
-        trimmed = trim_oldest_exchange(history)
-        if trimmed:
-            with open(filepath, "w") as f:
-                json.dump(history, f, indent=2)
-        else:
-            print("⚠️  Unable to trim — no complete exchange found.") 
+    size_kb = os.path.getsize(filepath) / 1024
+    if size_kb > MAX_FILE_SIZE_KB:
+        history.pop()
+        with open(filepath, "w") as f:
+            json.dump(history, f, indent=2)
+        return False, size_kb
+    return True, size_kb
 
 def retrieve_latest_memory(history: list):
     # Retrieve the latest memory or data

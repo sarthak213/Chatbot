@@ -67,9 +67,17 @@ def chat():
             memory.clear_history(history, session_file)
             print("Chat history cleared.")
             continue
-        memory.store_in_memory(history, "user", user_input, session_file)
+       
+        success, size = memory.store_in_memory(history, "user", user_input, session_file)
+        if not success:
+            print(f"⚠️ Message rejected. Session size limit ({size:.2f} KB) exceeded.")
+            continue
         response = generate_reply(history)
-        memory.store_in_memory(history, "ai", response, session_file)
+        
+        success, size = memory.store_in_memory(history, "ai", response, session_file)
+        if not success:
+            print(f"⚠️ AI response rejected. Session size limit ({size:.2f} KB) exceeded.")
+            continue
         print("AI:", response)
 
 if __name__ == "__main__":
