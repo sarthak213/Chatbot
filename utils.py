@@ -1,4 +1,4 @@
-from config import MODEL_NAME, MAX_HISTORY, DEBUG_MODE, REVERSE_MODE
+from config import DEBUG_MODE, REVERSE_MODE
 
 def generate_reply(history: list) -> str:
     last_message = None

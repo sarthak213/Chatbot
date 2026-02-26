@@ -1,6 +1,12 @@
 import json
 import os
-from config import LATEST_EXCHANGE_PAIRS
+from config import LATEST_EXCHANGE_PAIRS, MAX_FILE_SIZE_KB
+
+def check_file_size(filepath: str) -> bool:
+    if not os.path.exists(filepath):
+        return False  
+    file_size = os.path.getsize(filepath) / 1024  
+    return file_size > MAX_FILE_SIZE_KB
 
 def initialize_memory(session_file):
     # Initialize memory or data structures here
@@ -9,12 +15,28 @@ def initialize_memory(session_file):
             return json.load(f)
     return []
 
+def trim_oldest_exchange(history: list):
+    i = 0
+    while i < len(history) - 1:
+        if history[i]["role"] == "user" and history[i + 1]["role"] == "ai":
+            del history[i:i + 2]
+            return True
+        i += 1
+    return False
+
 def store_in_memory(history: list, role: str, content: str, filepath: str):
     # Store data in memory
     history.append({"role": role, "content": content})
     with open(filepath, "w") as f:
         json.dump(history, f, indent=2)
-
+    if check_file_size(filepath):
+        print("⚠️  Session file exceeded size limit. Trimming oldest exchange...")
+        trimmed = trim_oldest_exchange(history)
+        if trimmed:
+            with open(filepath, "w") as f:
+                json.dump(history, f, indent=2)
+        else:
+            print("⚠️  Unable to trim — no complete exchange found.") 
 
 def retrieve_latest_memory(history: list):
     # Retrieve the latest memory or data
